@@ -1,6 +1,7 @@
 package com.geekylikes.app.security;
 
 import com.geekylikes.app.security.jwt.AuthEntryPointJwt;
+import com.geekylikes.app.security.jwt.AuthTokenFilter;
 import com.geekylikes.app.security.services.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -28,7 +29,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private AuthEntryPointJwt unauthorizedHandler;
 
     @Bean
-    public  AuthTokenFilter authenticationJwtTokenFilter() {
+    public AuthTokenFilter authenticationJwtTokenFilter() {
         return new AuthTokenFilter();
     }
 
@@ -54,4 +55,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
+
+
+
 }

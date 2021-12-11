@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @CrossOrigin
 @RestController
 @RequestMapping("/api/auth")
-public class authController {
+public class AuthController {
     @Autowired
     private UserRepository userRepository;
 

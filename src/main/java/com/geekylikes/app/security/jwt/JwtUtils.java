@@ -14,7 +14,7 @@ import java.util.Date;
 public class JwtUtils {
     private static Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-    @Value("${geekylikes.app.jwtSecret=lostmustang}")
+    @Value("${geekylikes.app.jwtSecret}")
     private String jwtSecret;
 
     public Boolean validateJwtToken(String authToken) {
@@ -26,7 +26,7 @@ public class JwtUtils {
         } catch (MalformedJwtException e) {
             logger.error("Invalid JWT token: {}", e.getMessage());;
         } catch (ExpiredJwtException e) {
-            logger.error("JWT expired: {}", e.getMessage());
+            logger.error("JWT token is expired: {}", e.getMessage());
         } catch (UnsupportedJwtException e) {
             logger.error(" JWT unsupported: {}", e.getMessage());
         } catch (IllegalArgumentException e) {
@@ -46,7 +46,7 @@ public class JwtUtils {
 
     public String getUsernameFromJwtToken(String token) {
 
-        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJwt(token).getBody().getSubject();
+        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();
     }
 
 }

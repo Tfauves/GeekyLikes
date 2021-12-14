@@ -52,11 +52,14 @@ public class TestController {
         return ResponseEntity.ok(response.getArticles());
     }
 
-//    @GetMapping("/newsCategory/{category}")
-//    public ResponseEntity<?> getArticlesByCategory() {
-//
-//    }
+    @GetMapping("/newsCategory/{category}")
+    public ResponseEntity<?> getArticlesByCategory(@PathVariable String category) {
+        String uri = "https://newsapi.org/v2/everything?sortBy=popularity&apiKey=" + apiKey + "&q=" + category;
 
+        NewsResponse response = restTemplate.getForObject(uri, NewsResponse.class);
+
+        return ResponseEntity.ok(response.getArticles());
+    }
 
 
 }

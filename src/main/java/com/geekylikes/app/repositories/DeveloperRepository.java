@@ -18,6 +18,8 @@ public interface DeveloperRepository extends JpaRepository<Developer, Long> {
 
     Optional<Developer> findByUser_id(Long id);
 
+    Void deleteByUser_id(Long id);
+
 //    @Query("SELECT * FROM developer WHERE cohort = ?1 AND ?2 in languages")
 //    Developer findByCohortAndLanguage(Integer cohort, String language);
 }

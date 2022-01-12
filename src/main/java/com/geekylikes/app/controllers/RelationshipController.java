@@ -84,6 +84,45 @@ public class RelationshipController {
         return new ResponseEntity<>(new MessageResponse("Success"), HttpStatus.CREATED);
     }
 
+    @PostMapping("/block/{rId}")
+    public ResponseEntity<MessageResponse> blockRecipient(@PathVariable Long rId) {
+        User currentUser = userService.getCurrentUser();
+
+        if (currentUser == null) {
+            return new ResponseEntity<>(new MessageResponse("Invalid User"), HttpStatus.BAD_REQUEST);
+
+        }
+
+        Developer originator = developerRepository.findByUser_id(currentUser.getId()).orElseThrow(()->
+                new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        Developer recipient = developerRepository.findById(rId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        //create edge cases
+        //if pending changed to block
+        //if approve change to bock
+        //if blocked do nothing
+
+        //N t exists
+        // if pending change to block
+        //if approve change to block
+        //v if blocked do nothing
+
+
+        try {
+            repository.save(new Relationship(originator, recipient, ERelationship.BLOCKED));
+
+        }catch (Exception e) {
+            System.out.println("error" + e.getLocalizedMessage());
+            return new ResponseEntity<>(new MessageResponse("server error"), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return new ResponseEntity<>(new MessageResponse("Success"), HttpStatus.CREATED);
+
+    }
+
+
+
 
 
 }

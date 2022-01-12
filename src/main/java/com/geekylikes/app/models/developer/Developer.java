@@ -51,6 +51,16 @@ public class Developer {
     @JsonIgnore
     private User user;
 
+    @ManyToMany()
+    @JoinTable(
+            name = "relationship",
+            joinColumns = @JoinColumn(name = "recipient_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "originator_id", referencedColumnName = "id")
+    )
+
+    @JsonIgnore
+    private Set<Developer> relationships;
+
     public Developer() {}
 
     public Developer(String name, String email, Integer cohort, User user) {

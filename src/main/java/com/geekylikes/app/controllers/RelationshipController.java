@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Optional;
+
 @CrossOrigin
 @RestController
 @RequestMapping("/api/relationships")
@@ -41,6 +43,35 @@ public class RelationshipController {
             new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         Developer recipient = developerRepository.findById(rId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+
+        Optional<Relationship> rel = repository.findByOriginator_idAndRecipient_id(originator.getId(), recipient.getId());
+        if (rel.isPresent()) {
+            return new ResponseEntity<>(new MessageResponse("Nice try, be patient"), HttpStatus.OK);
+        }
+
+        //check for existing  recipient user relationship.
+        //if no relationship create it
+        // if pending approve it
+        // if approved do nothing
+        // if blocked do nothing
+
+        Optional<Relationship> invRel = repository.findByOriginator_idAndRecipient_id(recipient.getId(), originator.getId());
+
+        if (invRel.isPresent()) {
+            switch (invRel.get().getType()) {
+                case PENDING:
+                    invRel.get().setType(ERelationship.ACCEPTED);
+                    repository.save(invRel.get());
+                    return new ResponseEntity<>(new MessageResponse("Success"), HttpStatus.CREATED);
+                case ACCEPTED:
+                    return new ResponseEntity<>(new MessageResponse("Your are friends already, stop taxing our system"),HttpStatus.OK);
+                case BLOCKED:
+                    return new ResponseEntity<>(new MessageResponse("Ok"), HttpStatus.OK);
+                default:
+                    return new ResponseEntity<>(new MessageResponse("SERVER ERROR _ DEFAULT RELATIONSHIP"), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
 
         try {
             repository.save(new Relationship(originator, recipient, ERelationship.PENDING));

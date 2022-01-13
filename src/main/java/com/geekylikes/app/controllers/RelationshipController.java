@@ -98,6 +98,37 @@ public class RelationshipController {
 
         Developer recipient = developerRepository.findById(rId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
+        Optional<Relationship> rel = repository.findByOriginator_idAndRecipient_id(originator.getId(), recipient.getId());
+        if (rel.isPresent()) {
+            switch (rel.get().getType()) {
+                case PENDING:
+                case ACCEPTED:
+                    rel.get().setType(ERelationship.BLOCKED);
+                    repository.save(rel.get());
+                    return new ResponseEntity<>(new MessageResponse("Blocked"), HttpStatus.OK);
+                case BLOCKED:
+                    return new ResponseEntity<>(new MessageResponse("Blocked"), HttpStatus.OK);
+                default:
+                    return new ResponseEntity<>(new MessageResponse("SERVER_ERROR: INVALID RELATIONSHIP STATUS"), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+        };
+        Optional<Relationship> invRel = repository.findByOriginator_idAndRecipient_id(recipient.getId(), originator.getId());
+        if (invRel.isPresent()) {
+            switch (invRel.get().getType()) {
+                case PENDING:
+                    invRel.get().setType(ERelationship.BLOCKED);
+                    repository.save(invRel.get());
+                    return new ResponseEntity<>(new MessageResponse("Blocked"), HttpStatus.OK);
+                case ACCEPTED:
+                case BLOCKED:
+                    return new ResponseEntity<>(new MessageResponse("Blocked"),HttpStatus.OK);
+                default:
+                    return new ResponseEntity<>(new MessageResponse("SERVER ERROR _ DEFAULT RELATIONSHIP"), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+
         //create edge cases
         //if pending changed to block
         //if approve change to bock

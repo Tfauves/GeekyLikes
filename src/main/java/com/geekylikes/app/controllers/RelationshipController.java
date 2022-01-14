@@ -181,6 +181,48 @@ public class RelationshipController {
     }
 
 
+    @DeleteMapping("/remove/{id}")
+    private ResponseEntity<MessageResponse> destroyRelationship(@PathVariable Long id) {
+        User currentUser = userService.getCurrentUser();
+        if (currentUser == null) {
+            return new ResponseEntity<>(new MessageResponse("Invalid User"), HttpStatus.BAD_REQUEST);
+
+        }
+
+        Developer developer = developerRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        Relationship rel = repository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        if (rel.getOriginator().getId() != developer.getId() && rel.getRecipient().getId() != developer.getId()) {
+            new ResponseEntity<>(new MessageResponse("Unauthorized"), HttpStatus.UNAUTHORIZED);
+        }
+
+        if (rel.getType() != ERelationship.BLOCKED) {
+            repository.delete(rel);
+        }
+        return new ResponseEntity<>(new MessageResponse("Success"), HttpStatus.OK);
+    }
+
+    @GetMapping("/friends")
+    public ResponseEntity<?> getFriends() {
+        User currentUser = userService.getCurrentUser();
+
+        if (currentUser == null) {
+            return new ResponseEntity<>(new MessageResponse("Invalid User"), HttpStatus.BAD_REQUEST);
+
+        }
+
+        Developer developer = developerRepository.findByUser_id(currentUser.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        Set<Relationship> rels = repository.findAllByOriginator_idAndType(developer.getId(), ERelationship.ACCEPTED);
+        Set<Relationship> invRels = repository.findAllByRecipient_idAndType(developer.getId(), ERelationship.ACCEPTED);
+
+        rels.addAll(invRels);
+        return new ResponseEntity<>(rels, HttpStatus.OK);
+
+    }
+
+
 
 
 

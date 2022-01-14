@@ -15,7 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.persistence.SecondaryTable;
 import java.util.Optional;
+import java.util.Set;
 
 @CrossOrigin
 @RestController
@@ -117,10 +119,10 @@ public class RelationshipController {
         if (invRel.isPresent()) {
             switch (invRel.get().getType()) {
                 case PENDING:
+                case ACCEPTED:
                     invRel.get().setType(ERelationship.BLOCKED);
                     repository.save(invRel.get());
                     return new ResponseEntity<>(new MessageResponse("Blocked"), HttpStatus.OK);
-                case ACCEPTED:
                 case BLOCKED:
                     return new ResponseEntity<>(new MessageResponse("Blocked"),HttpStatus.OK);
                 default:
@@ -143,6 +145,7 @@ public class RelationshipController {
         try {
             repository.save(new Relationship(originator, recipient, ERelationship.BLOCKED));
 
+
         }catch (Exception e) {
             System.out.println("error" + e.getLocalizedMessage());
             return new ResponseEntity<>(new MessageResponse("server error"), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -151,7 +154,6 @@ public class RelationshipController {
         return new ResponseEntity<>(new MessageResponse("Success"), HttpStatus.CREATED);
 
     }
-
 
 
 

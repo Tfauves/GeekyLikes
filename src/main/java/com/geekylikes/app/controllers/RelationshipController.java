@@ -155,6 +155,36 @@ public class RelationshipController {
 
     }
 
+    @PostMapping("/approve/{id}")
+    private ResponseEntity<MessageResponse> approvalRelationship(@PathVariable Long id) {
+        User currentUser = userService.getCurrentUser();
+
+        if(currentUser == null) {
+            return new ResponseEntity<>(new MessageResponse("Invalid User"), HttpStatus.BAD_REQUEST);
+        }
+
+        Developer recipient = developerRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        Relationship rel = repository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        if (rel.getRecipient().getId() != recipient.getId()) {
+            return new ResponseEntity<>(new MessageResponse("Unauthorized"), HttpStatus.UNAUTHORIZED);
+        }
+
+        if(rel.getType() == ERelationship.PENDING) {
+            rel.setType(ERelationship.ACCEPTED);
+            repository.save(rel);
+        }
+
+        return new ResponseEntity<>(new MessageResponse("Approved"), HttpStatus.OK);
+
+    }
+
+
+
+
+
+
 
 
 

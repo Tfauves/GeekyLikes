@@ -78,23 +78,12 @@ public class DeveloperController {
         if (currentUser == null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
-
         newDeveloper.setUser(currentUser);
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-//
-//        User currentUser = user_repository.findById(userDetails.getId()).orElseThrow(()-> new ResponseStatusException(HttpStatus.BAD_REQUEST));
-//
-//        newDeveloper.setUser(currentUser);
-
-        // TODO: 12/21/2021 add check for existing developer
-
-
         return new ResponseEntity<>(repository.save(newDeveloper), HttpStatus.CREATED);
     }
 
     @PostMapping("/photo")
-    public Developer addPhoto(@RequestBody Developer dev) {// TODO: 12/21/2021  refactor dev to updates
+    public Developer addPhoto(@RequestBody Developer dev) {
 
         User currentUser = userService.getCurrentUser();
 
@@ -141,12 +130,9 @@ public class DeveloperController {
 
         Developer developer = repository.findByUser_id(currentUser.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-//        updates.setId(developer.getId());
-//        return repository.save(updates);
         if (updates.getName() != null) developer.setName(updates.getName());
         if (updates.getEmail() != null) developer.setEmail(updates.getEmail());
         if (updates.getCohort() != null) developer.setCohort(updates.getCohort());
-//        if (updates.languages != null) developer.languages = updates.languages;
 
         return repository.save(developer);
     }

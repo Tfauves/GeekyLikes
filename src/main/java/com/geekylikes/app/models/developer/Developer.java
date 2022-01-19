@@ -61,6 +61,15 @@ public class Developer {
     @JsonIgnore
     private Set<Developer> relationships;
 
+    @ManyToMany()
+    @JoinTable(
+            name="relationship",
+            joinColumns = @JoinColumn(name="recipient_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name="originator_id", referencedColumnName = "id")
+    )
+    @JsonIgnore
+    private Set<Developer> inverseRelationShips;
+
     public Developer() {}
 
     public Developer(String name, String email, Integer cohort, User user) {
@@ -132,5 +141,21 @@ public class Developer {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Set<Developer> getRelationships() {
+        return relationships;
+    }
+
+    public void setRelationships(Set<Developer> relationships) {
+        this.relationships = relationships;
+    }
+
+    public Set<Developer> getInverseRelationShips() {
+        return inverseRelationShips;
+    }
+
+    public void setInverseRelationShips(Set<Developer> inverseRelationShips) {
+        this.inverseRelationShips = inverseRelationShips;
     }
 }

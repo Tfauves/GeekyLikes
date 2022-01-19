@@ -15,5 +15,6 @@ public interface RelationshipRepository extends JpaRepository<Relationship, Long
     Set<Relationship> findAllByOriginator_idAndType (Long id, ERelationship type);
     Optional<Relationship> findByOriginator_idAndRecipient_id(Long oId, Long rId);
     Optional<Relationship> findByOriginator_idOrRecipient_id(Long oId, Long rId);
+    Boolean existsByOriginator_idOrRecipient_id(Long oId, Long rId, ERelationship type);
 
 }

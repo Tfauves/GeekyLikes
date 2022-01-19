@@ -5,6 +5,8 @@ import com.geekylikes.app.models.avatar.Avatar;
 import com.geekylikes.app.models.developer.Developer;
 import com.geekylikes.app.models.geekout.Geekout;
 import com.geekylikes.app.models.language.Language;
+import com.geekylikes.app.payload.response.FriendDeveloper;
+import com.geekylikes.app.payload.response.PublicDeveloper;
 import com.geekylikes.app.repositories.AvatarRepository;
 import com.geekylikes.app.repositories.DeveloperRepository;
 import com.geekylikes.app.repositories.GeekoutRepository;
@@ -41,6 +43,19 @@ public class DeveloperController {
     @GetMapping
     public @ResponseBody List<Developer> getDevelopers() {
         return repository.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getDevById(@PathVariable Long id) {
+        User currentUser = userService.getCurrentUser();
+
+        if (currentUser == null) {
+            return null;
+        }
+
+        Developer developer = repository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        return new ResponseEntity<>(FriendDeveloper.build(developer),HttpStatus.OK);
     }
 
     @GetMapping("/lang/{langId}")

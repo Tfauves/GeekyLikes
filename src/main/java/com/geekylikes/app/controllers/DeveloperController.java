@@ -185,5 +185,11 @@ public class DeveloperController {
         return new ResponseEntity<>("Deleted", HttpStatus.OK);
     }
 
+    @DeleteMapping("{id}")
+    public ResponseEntity<String> destroyDeveloper(@PathVariable Long id) {
+        repository.deleteById(id);
+        return new ResponseEntity<>("Deleted", HttpStatus.OK);
+    }
+
 
 }

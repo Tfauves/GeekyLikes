@@ -5,12 +5,10 @@ import com.geekylikes.app.models.avatar.Avatar;
 import com.geekylikes.app.models.developer.Developer;
 import com.geekylikes.app.models.geekout.Geekout;
 import com.geekylikes.app.models.language.Language;
+import com.geekylikes.app.models.relationships.ERelationship;
 import com.geekylikes.app.payload.response.FriendDeveloper;
 import com.geekylikes.app.payload.response.PublicDeveloper;
-import com.geekylikes.app.repositories.AvatarRepository;
-import com.geekylikes.app.repositories.DeveloperRepository;
-import com.geekylikes.app.repositories.GeekoutRepository;
-import com.geekylikes.app.repositories.UserRepository;
+import com.geekylikes.app.repositories.*;
 import com.geekylikes.app.security.services.UserDetailsImpl;
 import com.geekylikes.app.sevices.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +33,10 @@ public class DeveloperController {
     private AvatarRepository avatarRepository;
 
     @Autowired
-    GeekoutRepository geekoutRepository;
+    private GeekoutRepository geekoutRepository;
+
+    @Autowired
+    private RelationshipRepository relationshipRepository;
 
     @Autowired
     UserService userService;
@@ -46,16 +47,36 @@ public class DeveloperController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getDevById(@PathVariable Long id) {
+    public ResponseEntity<?> getDeveloperById(@PathVariable Long id) {
+        // get user
         User currentUser = userService.getCurrentUser();
 
         if (currentUser == null) {
             return null;
         }
+        Developer currentDeveloper = repository.findByUser_id(currentUser.getId()).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
+        );
 
-        Developer developer = repository.findById(id).orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        Developer developer = repository.findById(id).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
+        );
 
-        return new ResponseEntity<>(FriendDeveloper.build(developer),HttpStatus.OK);
+        // check friendship
+        if (
+                relationshipRepository.existsByOriginator_idAndRecipient_idAndType(
+                        currentDeveloper.getId(), developer.getId(), ERelationship.ACCEPTED
+                ) || relationshipRepository.existsByOriginator_idAndRecipient_idAndType(
+                        developer.getId(), currentDeveloper.getId(), ERelationship.ACCEPTED
+                )
+        ) {
+            return new ResponseEntity<>(FriendDeveloper.build(developer), HttpStatus.OK);
+        }
+
+        // TODO: if blocked send 404
+
+        return new ResponseEntity<>(PublicDeveloper.build(developer), HttpStatus.OK);
+
     }
 
     @GetMapping("/lang/{langId}")

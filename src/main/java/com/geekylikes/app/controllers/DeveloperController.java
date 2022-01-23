@@ -73,8 +73,6 @@ public class DeveloperController {
             return new ResponseEntity<>(FriendDeveloper.build(developer), HttpStatus.OK);
         }
 
-        // TODO: if blocked send 404
-
         return new ResponseEntity<>(PublicDeveloper.build(developer), HttpStatus.OK);
 
     }

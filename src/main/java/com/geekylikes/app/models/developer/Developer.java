@@ -4,12 +4,10 @@ import com.fasterxml.jackson.annotation.*;
 import com.geekylikes.app.models.approve.Approve;
 import com.geekylikes.app.models.auth.User;
 import com.geekylikes.app.models.avatar.Avatar;
-import com.geekylikes.app.models.geekout.Geekout;
 import com.geekylikes.app.models.language.Language;
 
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 //@JsonIdentityInfo(
@@ -68,7 +66,7 @@ public class Developer {
             inverseJoinColumns = @JoinColumn(name="originator_id", referencedColumnName = "id")
     )
     @JsonIgnore
-    private Set<Developer> inverseRelationShips;
+    private Set<Developer> inverseRelationships;
 
     public Developer() {}
 
@@ -151,11 +149,11 @@ public class Developer {
         this.relationships = relationships;
     }
 
-    public Set<Developer> getInverseRelationShips() {
-        return inverseRelationShips;
+    public Set<Developer> getInverseRelationships() {
+        return inverseRelationships;
     }
 
-    public void setInverseRelationShips(Set<Developer> inverseRelationShips) {
-        this.inverseRelationShips = inverseRelationShips;
+    public void setInverseRelationships(Set<Developer> inverseRelationships) {
+        this.inverseRelationships = inverseRelationships;
     }
 }

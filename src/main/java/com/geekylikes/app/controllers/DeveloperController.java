@@ -36,6 +36,9 @@ public class DeveloperController {
     private GeekoutRepository geekoutRepository;
 
     @Autowired
+    private LanguageRepository languageRepository;
+
+    @Autowired
     private RelationshipRepository relationshipRepository;
 
     @Autowired
@@ -148,7 +151,9 @@ public class DeveloperController {
             return null;
         }
         Developer developer = repository.findByUser_id(currentUser.getId()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-
+        for (Language lang : updates) {
+            languageRepository.save(lang);
+        }
         developer.languages.addAll(updates);
         return repository.save(developer);
     }

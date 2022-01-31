@@ -20,6 +20,10 @@ public interface DeveloperRepository extends JpaRepository<Developer, Long> {
 
     Void deleteByUser_id(Long id);
 
+
+//      Set<Developer> findAllByRelationships_type(ERelationship type);
+//      Set<Developer> findAllByInverseRelationships_type(ERelationship type);
+
 //    @Query("SELECT * FROM developer WHERE cohort = ?1 AND ?2 in languages")
 //    Developer findByCohortAndLanguage(Integer cohort, String language);
 }

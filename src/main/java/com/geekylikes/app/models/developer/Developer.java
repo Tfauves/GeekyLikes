@@ -5,6 +5,7 @@ import com.geekylikes.app.models.approve.Approve;
 import com.geekylikes.app.models.auth.User;
 import com.geekylikes.app.models.avatar.Avatar;
 import com.geekylikes.app.models.language.Language;
+import org.hibernate.annotations.WhereJoinTable;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -52,10 +53,10 @@ public class Developer {
     @ManyToMany()
     @JoinTable(
             name = "relationship",
-            joinColumns = @JoinColumn(name = "recipient_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "originator_id", referencedColumnName = "id")
+            joinColumns = @JoinColumn(name = "originator_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "recipient_id", referencedColumnName = "id")
     )
-
+    @WhereJoinTable(clause = "type = 'ACCEPTED'")
     @JsonIgnore
     private Set<Developer> relationships;
 
@@ -66,6 +67,7 @@ public class Developer {
             inverseJoinColumns = @JoinColumn(name="originator_id", referencedColumnName = "id")
     )
     @JsonIgnore
+    @WhereJoinTable(clause = "type = 'ACCEPTED'")
     private Set<Developer> inverseRelationships;
 
     public Developer() {}

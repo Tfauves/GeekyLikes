@@ -73,6 +73,7 @@ public class DeveloperController {
                         developer.getId(), currentDeveloper.getId(), ERelationship.ACCEPTED
                 )
         ) {
+
             return new ResponseEntity<>(FriendDeveloper.build(developer), HttpStatus.OK);
         }
 

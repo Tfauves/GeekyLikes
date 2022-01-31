@@ -38,7 +38,7 @@ public class LanguageController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('Admin')")
+//    @PreAuthorize("hasRole('Admin')")
     public Language createOne(@RequestBody Language newLanguage) {
         return repository.save(newLanguage);
     }

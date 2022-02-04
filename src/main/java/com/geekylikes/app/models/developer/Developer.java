@@ -58,7 +58,7 @@ public class Developer {
     )
     @WhereJoinTable(clause = "type = 'ACCEPTED'")
     @JsonIgnore
-    private Set<Developer> relationships;
+    private Set<Developer> relationships = new HashSet<>();
 
     @ManyToMany()
     @JoinTable(
@@ -68,7 +68,32 @@ public class Developer {
     )
     @JsonIgnore
     @WhereJoinTable(clause = "type = 'ACCEPTED'")
-    private Set<Developer> inverseRelationships;
+    private Set<Developer> inverseRelationships = new HashSet<>();
+
+    //pending relationships
+    @ManyToMany()
+    @JoinTable(
+            name = "relationship",
+            joinColumns = @JoinColumn(name = "originator_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "recipient_id", referencedColumnName = "id")
+    )
+    @WhereJoinTable(clause = "type = 'PENDING'")
+    @JsonIgnore
+    private Set<Developer> pendingRelationships = new HashSet<>();
+
+    //incoming relationships
+    @ManyToMany()
+    @JoinTable(
+            name="relationship",
+            joinColumns = @JoinColumn(name="recipient_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name="originator_id", referencedColumnName = "id")
+    )
+    @JsonIgnore
+    @WhereJoinTable(clause = "type = 'PENDING'")
+    private Set<Developer> incomingRelationships = new HashSet<>();
+
+
+
 
     public Developer() {}
 
@@ -157,5 +182,29 @@ public class Developer {
 
     public void setInverseRelationships(Set<Developer> inverseRelationships) {
         this.inverseRelationships = inverseRelationships;
+    }
+
+    public Set<Approve> getApprovals() {
+        return approvals;
+    }
+
+    public void setApprovals(Set<Approve> approvals) {
+        this.approvals = approvals;
+    }
+
+    public Set<Developer> getPendingRelationships() {
+        return pendingRelationships;
+    }
+
+    public void setPendingRelationships(Set<Developer> pendingRelationships) {
+        this.pendingRelationships = pendingRelationships;
+    }
+
+    public Set<Developer> getIncomingRelationships() {
+        return incomingRelationships;
+    }
+
+    public void setIncomingRelationships(Set<Developer> incomingRelationships) {
+        this.incomingRelationships = incomingRelationships;
     }
 }

@@ -12,9 +12,9 @@ public class SelfDeveloper {
     private String email;
     private Integer cohort;
     private Set<Language> languages;
-    private Set<Developer> friends; //approved
-    private Set<Developer> pendingFriends; // i've sent
-    private Set<Developer> incomingFriends; // waiting fore me
+    private Set<Developer> friends;
+    private Set<Developer> pendingFriends;
+    private Set<Developer> incomingFriends;
 
     public SelfDeveloper(Long id, String name, String email, Integer cohort, Set<Language> languages, Set<Developer> friends, Set<Developer> pendingFriends, Set<Developer> incomingFriends) {
         this.id = id;
@@ -28,16 +28,17 @@ public class SelfDeveloper {
     }
 
     static public SelfDeveloper build(Developer developer) {
-        Set<Developer> empty = new HashSet<>();
+        Set<Developer> friends = developer.getRelationships();
+        friends.addAll(developer.getInverseRelationships());
         return new SelfDeveloper(
                 developer.getId(),
                 developer.getName(),
                 developer.getEmail(),
                 developer.getCohort(),
                 developer.getLanguages(),
-                empty,
-                empty,
-                empty
+                friends,
+                developer.getPendingRelationships(),
+                developer.getIncomingRelationships()
         );
     }
 
